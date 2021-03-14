@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "153739979536",
+    "project_id": "online-survey-system-2d219",
+    "storage_bucket": "online-survey-system-2d219.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153739979536:android:b9d1388f70ef4ce7e29395",
+        "android_client_info": {
+          "package_name": "com.ray3du.onlinesurvey"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "153739979536-tdd4crrboq37883c4quk5ajjcekdomag.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ray3du.onlinesurvey",
+            "certificate_hash": "d79c3772e0b0075638fa2868ffd0a4f053085e4d"
+          }
+        },
+        {
+          "client_id": "153739979536-h5e86ane6rnv4u8mmhehkbvfq8m7nmu7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLnSZrgUjeOgEfNbQxEMUtt2ZpPZzoxk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "153739979536-h5e86ane6rnv4u8mmhehkbvfq8m7nmu7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
