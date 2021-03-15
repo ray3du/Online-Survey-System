@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val navView = findViewById<NavigationView>(R.id.navView)
         val drawer = findViewById<ImageView>(R.id.drawer)
+        val lecturer = findViewById<CardView>(R.id.lecturer)
 
 
         //Handle drawer
@@ -73,6 +75,12 @@ class MainActivity : AppCompatActivity() {
 
         drawer.setOnClickListener {
             drawerLayout.openDrawer(navView)
+        }
+
+        //Handle lecturer
+        lecturer.setOnClickListener {
+            startActivity(Intent(this, EvaluationActivity::class.java))
+            finish()
         }
 
     }

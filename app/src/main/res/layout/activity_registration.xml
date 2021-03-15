@@ -20,7 +20,7 @@
             >
 
             <include
-                layout="@layout/toolbar"
+                layout="@layout/extended_toolbar"
                 />
 
         </LinearLayout>

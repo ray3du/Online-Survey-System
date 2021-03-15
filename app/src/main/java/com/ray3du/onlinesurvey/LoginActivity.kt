@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
         //handle login in
         loginButton.setOnClickListener {
             loginProgressBar.isVisible = true
-            if (email.text.toString() == ""){
+            if(email.text.toString() == ""){
                 Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show()
                 loginProgressBar.isVisible = false
             }else if (password.text.toString() == ""){
@@ -68,7 +68,11 @@ class LoginActivity : AppCompatActivity() {
         val currentUser = mAuth.currentUser
         if (currentUser != null){
             if(errorText == null){
-                startActivity(Intent(this, MainActivity::class.java))
+                if (currentUser.email?.toString() == "admin@gmail.com"){
+                    startActivity(Intent(this, AdminActivity::class.java))
+                }else{
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
             }
         }
     }
@@ -77,10 +81,16 @@ class LoginActivity : AppCompatActivity() {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             task ->
             if (task.isSuccessful){
-                val intent = Intent(this, MainActivity::class.java)
-                loginProgressBar.isVisible = false
-                startActivity(intent)
-                finish()
+                if(email == "admin@gmail.com"){
+                    val intent = Intent(this, AdminActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }else{
+                    val intent = Intent(this, MainActivity::class.java)
+                    loginProgressBar.isVisible = false
+                    startActivity(intent)
+                    finish()
+                }
             }else{
                 loginProgressBar.isVisible = false
                 Toast.makeText(this, "Login Failed..", Toast.LENGTH_SHORT).show()
