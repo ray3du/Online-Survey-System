@@ -93,6 +93,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/school"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
@@ -132,7 +133,7 @@
                 <!-- COLUMN 2  -->
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/chemistry"
+                    android:id="@+id/business"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
@@ -170,7 +171,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/physics"
+                    android:id="@+id/supermarket"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"

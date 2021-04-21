@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
 import com.google.firebase.database.*
 
@@ -20,66 +22,50 @@ class EvaluationActivity : AppCompatActivity() {
     private var quizNum: Int = 1
 
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_evaluation)
 
         val backButton = findViewById<ImageView>(R.id.backButton)
-        val evaluationLayout = findViewById<LinearLayout>(R.id.evaluationLayout)
+        val evaluationLayout = findViewById<WebView>(R.id.evaluationLayout)
         val title = findViewById<EditText>(R.id.titleAdmin)
-        val evaluationTitle = findViewById<TextView>(R.id.evaluationTitle)
+        var evaluationTitle = findViewById<TextView>(R.id.evaluationTitle)
 
 
         //Initialize database
         database = FirebaseDatabase.getInstance()
         databaseRef = database.reference
 
+        //Initialize webView
+        val settings = evaluationLayout.settings
+        settings.domStorageEnabled = true
+        settings.allowContentAccess = true
+        settings.javaScriptEnabled = true
 
-        databaseRef.child("Data").addValueEventListener(
-            object : ValueEventListener {
-                @SuppressLint("SetTextI18n")
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val value = snapshot.children
+        evaluationLayout.webViewClient = WebViewClient()
 
-                    value.forEach{
-                        println("uiz: $it")
-                        println("Value ${it.value}")
-                        titleKey = it.key.toString()
-                        evaluationTitle.setText(titleKey)
-                        val value1  = it.getValue(Question::class.java)
-                        println("Value quiz: $titleKey")
-                        println("Value quiz number: ${value1?.quizNumber}")
-                        textView1 = TextView(this@EvaluationActivity)
-                        textView1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                        textView1.text = "$quizNum ${value1?.quiz} "
-                        textView1.setTextColor(resources.getColor(R.color.black))
+        val bundle: Bundle? = intent.extras
 
-                        editText1 = EditText(this@EvaluationActivity)
-                        editText1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                        editText1.hint = "Answer here"
-                        editText1.inputType = InputType.TYPE_CLASS_TEXT
+        if (bundle != null){
+            val titleKey = bundle.getString("keys")
+            if (titleKey != ""){
+                databaseRef.child("Data/$titleKey").addValueEventListener(
+                        object : ValueEventListener {
+                            @SuppressLint("SetTextI18n")
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                val value = snapshot.getValue(Question::class.java)
+                                evaluationTitle.text = value?.quizNumber
+                                evaluationLayout.loadUrl("${value?.quiz}")
 
-                        evaluationLayout?.addView(textView1)
-                        evaluationLayout?.addView(editText1)
-                        quizNum++
-                    }
+                            }
 
-                    //title.setText(titleKey)
-
-                    button1 = Button(this@EvaluationActivity)
-                    button1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    button1.text = "Submit Response"
-
-                    evaluationLayout?.addView(button1)
-                    //titleEvaluation?.text = title?.text
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    //Toast.makeText(this@AdminActivity, "Failed to load data from database", Toast.LENGTH_SHORT).show()
-                }
+                            override fun onCancelled(error: DatabaseError) {
+                                Toast.makeText(this@EvaluationActivity, "Failed to load data from database", Toast.LENGTH_SHORT).show()
+                            }
+                        })
             }
-        )
+        }
 
 
         backButton.setOnClickListener {

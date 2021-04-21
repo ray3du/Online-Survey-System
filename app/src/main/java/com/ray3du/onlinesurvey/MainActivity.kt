@@ -27,6 +27,9 @@ class MainActivity : AppCompatActivity() {
         val navView = findViewById<NavigationView>(R.id.navView)
         val drawer = findViewById<ImageView>(R.id.drawer)
         val lecturer = findViewById<CardView>(R.id.lecturer)
+        val school = findViewById<CardView>(R.id.school)
+        val business = findViewById<CardView>(R.id.business)
+        val supermarket = findViewById<CardView>(R.id.supermarket)
 
 
         //Handle drawer
@@ -51,11 +54,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
-                R.id.nav_login -> {
-//                    val intent = Intent(this, Login::class.java)
-//                    intent.putExtra("data", "$sendData")
-//                    startActivity(intent)
-//                    finish()
+                R.id.nav_about -> {
+                    val intent = Intent(this, AboutActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
                 R.id.nav_logout -> {
                     mAuth = FirebaseAuth.getInstance()
@@ -79,7 +81,33 @@ class MainActivity : AppCompatActivity() {
 
         //Handle lecturer
         lecturer.setOnClickListener {
-            startActivity(Intent(this, EvaluationActivity::class.java))
+            val intent = Intent(this, EvaluationActivity::class.java)
+            intent.putExtra("keys", "lecturer")
+            startActivity(intent)
+            finish()
+        }
+
+        //Handle school
+        school.setOnClickListener {
+            val intent = Intent(this, EvaluationActivity::class.java)
+            intent.putExtra("keys", "school")
+            startActivity(intent)
+            finish()
+        }
+
+        //Handle business
+        business.setOnClickListener {
+            val intent = Intent(this, EvaluationActivity::class.java)
+            intent.putExtra("keys", "business")
+            startActivity(intent)
+            finish()
+        }
+
+        //Handle supermarket
+        supermarket.setOnClickListener {
+            val intent = Intent(this, EvaluationActivity::class.java)
+            intent.putExtra("keys", "supermarket")
+            startActivity(intent)
             finish()
         }
 

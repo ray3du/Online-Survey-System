@@ -8,9 +8,12 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -33,20 +36,26 @@ class AdminActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var title2: String
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
 
         //Handle views
         val questionNumber = findViewById<EditText>(R.id.questionNumber)
-        val viewLayout = findViewById<LinearLayout>(R.id.viewLayout)
+        val viewLayout = findViewById<WebView>(R.id.viewLayout)
         val generateButton = findViewById<Button>(R.id.generateView)
-        val evaluationLayout = findViewById<LinearLayout>(R.id.evaluationLayout)
+        val preview = findViewById<TextView>(R.id.preview)
         val title = findViewById<EditText>(R.id.titleAdmin)
-        val titleEvaluation = findViewById<TextView>(R.id.evaluationTitle)
         val logout = findViewById<ImageView>(R.id.logout)
 
+        //Initialize webView settings
+        val settings = viewLayout.settings
+        settings.javaScriptEnabled = true
+        settings.allowContentAccess = true
+        settings.domStorageEnabled = true
+
+        viewLayout.webViewClient = WebViewClient()
 
         list = mutableListOf()
         mAuth = FirebaseAuth.getInstance()
@@ -58,64 +67,14 @@ class AdminActivity : AppCompatActivity() {
         generateButton.setOnClickListener {
             generateButton.isEnabled = false
            if(questionNumber.text.toString() != ""){
-                while (count < questionNumber.text.toString().toInt()){
-                textView = TextView(this)
-                textView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                textView.text = "Quiz $count"
-                editText = EditText(this)
-                editText.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                editText.hint = "Write question $count"
-                editText.inputType = InputType.TYPE_CLASS_TEXT
-                editText.tag ="quiz$count"
-                editText.id = count
-
-                //Add textView and editText to layout
-                viewLayout?.addView(textView)
-                viewLayout?.addView(editText)
-                list.add(editText)
-
-                count++
-            }
+               writeNewUser(title.text.toString(), questionNumber.text.toString())
+               preview.isVisible = true
+               viewLayout.isClickable = false
+               Toast.makeText(this, "Loading a preview of the questionnaire", Toast.LENGTH_LONG).show()
+               viewLayout.loadUrl("${questionNumber.text}")
            }else{
-               Toast.makeText(this, "Question number cannot be empty", Toast.LENGTH_SHORT).show()
+               Toast.makeText(this, "Form link cannot be empty", Toast.LENGTH_SHORT).show()
            }
-
-            button = Button(this)
-            button.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            button.text = "Process Form"
-            viewLayout?.addView(button)
-            generateButton.isEnabled = true
-
-            button.setOnClickListener {
-                Toast.makeText(this, "Sent to database", Toast.LENGTH_SHORT).show()
-                println("click.......")
-                title2 = title.text.toString()
-                for (et in list){
-                    textView1 = TextView(this)
-                    textView1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    textView1.text = "$quizId. ${et.text}"
-                    textView1.setTextColor(resources.getColor(R.color.black))
-
-                    writeNewUser(quizId, et.text.toString())
-
-                    editText1 = EditText(this)
-                    editText1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    editText1.hint = "Answer here"
-                    editText1.inputType = InputType.TYPE_CLASS_TEXT
-
-                    evaluationLayout?.addView(textView1)
-                    evaluationLayout?.addView(editText1)
-
-                    quizId++
-                }
-
-                Toast.makeText(this, "Sent to database", Toast.LENGTH_SHORT).show()
-                button1 = Button(this)
-                button1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                button1.text = "Submit Response"
-
-                evaluationLayout?.addView(button1)
-            }
         }
 
         logout.setOnClickListener {
@@ -134,10 +93,9 @@ class AdminActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun writeNewUser(quizId: Int, text: String) {
+    private fun writeNewUser(quizId: String, text: String) {
         val user = Question(quizId, text)
-        val uuid = UUID.randomUUID()
-        databaseReference.child("Data/$title2").setValue(user)
+        databaseReference.child("Data/$quizId").setValue(user)
     }
 
 }
